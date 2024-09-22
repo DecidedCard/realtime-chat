@@ -1,0 +1,36 @@
+import { NextApiRequest } from "next";
+import { Server as NetServer } from "http";
+import { Server as SocketIOServer } from "socket.io";
+import { NextApiResponseServerIO } from "@/types/socket";
+
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponseServerIO
+) {
+  if (!res.socket.server.io) {
+    console.log("Starting Socket.io server...");
+
+    const httpServer: NetServer = res.socket.server as any;
+    const io = new SocketIOServer(httpServer, {
+      path: "/api/socket",
+    });
+
+    io.on("connection", (socket) => {
+      console.log("User connected:", socket.id);
+
+      socket.on("message", (message) => {
+        console.log("Message received:", message);
+        io.emit("message", message);
+      });
+
+      socket.on("disconnect", () => {
+        console.log("User disconnected:", socket.id);
+      });
+    });
+
+    res.socket.server.io = io;
+  } else {
+    console.log("Socket.io server is already running.");
+  }
+  res.end();
+}
