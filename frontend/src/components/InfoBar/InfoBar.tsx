@@ -6,12 +6,12 @@ import closeIcon from "@/../public/assets/closeIcon.png";
 
 import "./InfoBar.css";
 
-function InfoBar({ room }: { room: string }) {
+function InfoBar() {
   return (
     <div className="infoBar">
       <div className="leftInnerContainer">
         <Image className="onlineIcon" src={onlineIcon} alt="online icon" />
-        <h3>{room}</h3>
+        <h3>실시간 채팅 테스트</h3>
       </div>
       <div className="rightInnerContainer">
         <a href="/join">
