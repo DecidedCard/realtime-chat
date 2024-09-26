@@ -1,3 +1,4 @@
+const chatController = require("../Controllers/chat.controller");
 const userController = require("../Controllers/user.controller");
 
 function socket(io) {
@@ -8,6 +9,19 @@ function socket(io) {
       try {
         const userData = await userController.saveUser(user, socket.id);
         cb({ ok: true, data: userData });
+      } catch (error) {
+        cb({ ok: false, error: error.message });
+      }
+    });
+
+    socket.on("sendMessage", async (message, cb) => {
+      try {
+        const user = await userController.checkUser(socket.id);
+
+        const newMessage = await chatController.saveChat(message, user);
+
+        io.emit("message", newMessage);
+        cb({ ok: true });
       } catch (error) {
         cb({ ok: false, error: error.message });
       }
