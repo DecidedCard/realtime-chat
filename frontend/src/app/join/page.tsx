@@ -7,7 +7,6 @@ import "./join.css";
 
 function Join() {
   const [name, setName] = useState("");
-  const [room, setRoom] = useState("");
   return (
     <div className="joinOuterContainer">
       <div className="joinInnerContainer">
@@ -20,17 +19,10 @@ function Join() {
             onChange={(event) => setName(event.target.value)}
           />
         </div>
-        <div>
-          <input
-            placeholder="채팅방"
-            className="joinInput mt-20"
-            type="text"
-            onChange={(event) => setRoom(event.target.value)}
-          />
-        </div>
+
         <Link
-          onClick={(e) => (!name || !room ? e.preventDefault() : null)}
-          href={`/chat?name=${name}&room=${room}`}
+          onClick={(e) => (!name ? e.preventDefault() : null)}
+          href={`/chat?name=${name}`}
         >
           <button className={"button mt-20"} type="submit">
             가입
