@@ -20,30 +20,63 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
 
   const params = useSearchParams();
-
   const name = params.get("name");
 
   useEffect(() => {
+    if (!name) return; // 이름이 없을 때는 실행하지 않음
+
+    // 로그인 이벤트 등록
     socket.emit("login", name, (res: socketLoginRes) => {
       if (res.ok) {
-        setUsers((prev) => [...prev, res.data]);
+        setUsers((prev) => {
+          // 중복 사용자 제거
+          if (prev.find((user) => user.name === res.data.name)) return prev;
+          return [...prev, res.data];
+        });
       }
     });
 
-    socket.on("message", (message) => {
-      console.log(message);
-      setMessages((prev) => [
-        ...prev,
-        { user: message.user.name, text: message.chat },
-      ]);
-    });
-  }, [name]);
+    // 사용자 정보 및 메시지 수신 핸들러
+    const handleUser = (userDate: User) => {
+      setUsers((prev) => {
+        // 중복 사용자 제거
+        if (prev.find((user) => user.name === userDate.name)) return prev;
+        return [...prev, userDate];
+      });
+    };
+
+    const handleMessage = (message: { user: User; chat: string }) => {
+      setMessages((prev) => {
+        if (
+          prev.find(
+            (prev) =>
+              prev.text === message.chat && prev.user === message.user.name
+          )
+        )
+          return prev;
+        return [...prev, { user: message.user.name, text: message.chat }];
+      });
+    };
+
+    // 소켓 이벤트 리스너 등록
+    socket.on("user", handleUser);
+    socket.on("message", handleMessage);
+
+    // Cleanup: 컴포넌트가 언마운트될 때 기존 리스너 제거
+    return () => {
+      socket.off("user", handleUser);
+      socket.off("message", handleMessage);
+    };
+  }, [name]); // name이 바뀔 때만 실행
 
   const sendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit("sendMessage", message, (res: any) => {
-      console.log(res);
-    });
+    if (message) {
+      socket.emit("sendMessage", message, (res: any) => {
+        console.log(res);
+      });
+      setMessage(""); // 전송 후 메시지 초기화
+    }
   };
 
   return (
