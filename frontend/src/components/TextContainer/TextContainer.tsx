@@ -1,10 +1,13 @@
 import React from "react";
+import Image from "next/image";
 
 import onlineIcon from "@/../public/assets/onlineIcon.png";
 
 import "./TextContainer.css";
 
-function TextContainer({ users }) {
+import type { User } from "@/types";
+
+function TextContainer({ users }: { users: User[] }) {
   return (
     <div className="textContainer">
       <div>
@@ -32,10 +35,10 @@ function TextContainer({ users }) {
           <h1>현재 채팅중인 사람들 : </h1>
           <div className="activeContainer">
             <h2>
-              {users.map(({ name }) => (
+              {users.map(({ name }: { name: string }) => (
                 <div key={name} className="activeItem">
                   {name}
-                  <img alt="Online Icon" src={onlineIcon} />
+                  <Image alt="Online Icon" src={onlineIcon} />
                 </div>
               ))}
             </h2>
