@@ -33,8 +33,20 @@ function socket(io) {
       }
     });
 
-    socket.on("disconnect", () => {
-      console.log("유저가 접속을 종료했습니다.");
+    socket.on("disconnect", async () => {
+      try {
+        const user = await userController.checkUser(socket.id);
+
+        const outMessage = {
+          chat: `${user.name}이 접속을 종료하였습니다..`,
+          user: { id: null, name: "system" },
+        };
+
+        io.emit("message", newMessage);
+        cb({ ok: true });
+      } catch (error) {
+        cb({ ok: false, error: error.message });
+      }
     });
   });
 }
