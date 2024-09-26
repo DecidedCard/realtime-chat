@@ -42,7 +42,7 @@ function socket(io) {
           user: { id: null, name: "system" },
         };
 
-        io.emit("message", newMessage);
+        io.emit("message", outMessage);
         cb({ ok: true });
       } catch (error) {
         cb({ ok: false, error: error.message });
