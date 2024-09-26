@@ -1,8 +1,10 @@
 "use client";
 
-import socket from "@/util/server";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  console.log(socket);
+  const navigation = useRouter();
+  navigation.replace("/join");
+
   return <div>realtime Chat</div>;
 }
