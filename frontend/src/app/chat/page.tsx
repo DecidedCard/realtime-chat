@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import socket from "@/util/server";
@@ -22,25 +22,23 @@ const Chat = () => {
   const params = useSearchParams();
 
   const name = params.get("name");
-  const room = params.get("room");
 
   useEffect(() => {
-    const user = { name, room };
-    socket.emit("login", user, (res) => {
+    socket.emit("login", name, (res) => {
       console.log(res);
     });
-  }, [name, room]);
+  }, [name]);
 
   return (
     <div className="outerContainer">
       <div className="container">
-        <InfoBar room={roomRef.current} />
-        <Messages messages={messages} name={nameRef.current} />
-        <Input
+        <InfoBar />
+        <Messages messages={messages} name={name!} />
+        {/* <Input
           message={message}
           setMessage={setMessage}
           sendMessage={sendMessage}
-        />
+        /> */}
       </div>
       <TextContainer users={users} />
     </div>
