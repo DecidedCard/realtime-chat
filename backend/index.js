@@ -1,11 +1,20 @@
 const express = require("express");
+const mongoose = require("mongoose");
+require("dotenv").config();
 const { Server } = require("socket.io");
 const http = require("http");
 const cors = require("cors");
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 
 const app = express();
+
+console.log(process.env.DB);
+
+mongoose
+  .connect(process.env.DB)
+  .then(() => console.log("connected to database"));
+
 const httpServer = http.createServer(app);
 
 // CORS 설정: 모든 출처를 허용
