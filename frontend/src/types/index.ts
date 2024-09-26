@@ -9,3 +9,8 @@ export type socketLoginRes = {
   data: User;
   error: string;
 };
+
+export type Message = {
+  user: string;
+  text: string;
+};

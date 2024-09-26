@@ -1,20 +1,18 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import BasicScrollToBottom from "react-scroll-to-bottom";
 import Message from "./Message/Message";
 
 import "./Messages.css";
 
+import type { Message as Msg } from "@/types";
+
 type Props = {
-  messages: string[];
+  messages: Msg[];
   name: string;
 };
 
 function Messages({ messages, name }: Props) {
-  useEffect(() => {
-    console.log(messages);
-  }, [messages]);
-
   return (
     <BasicScrollToBottom className="messages">
       {messages.map((message, i) => {

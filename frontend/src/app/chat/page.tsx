@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, FormEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import socket from "@/util/server";
 
@@ -12,12 +12,12 @@ import TextContainer from "@/components/TextContainer/TextContainer";
 
 import "./Chat.css";
 
-import type { socketLoginRes, User } from "@/types";
+import type { Message, socketLoginRes, User } from "@/types";
 
 const Chat = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const params = useSearchParams();
 
@@ -26,15 +26,23 @@ const Chat = () => {
   useEffect(() => {
     socket.emit("login", name, (res: socketLoginRes) => {
       if (res.ok) {
-        setUsers([...users, res.data]);
+        setUsers((prev) => [...prev, res.data]);
       }
+    });
+
+    socket.on("message", (message) => {
+      console.log(message);
+      setMessages((prev) => [
+        ...prev,
+        { user: message.user.name, text: message.chat },
+      ]);
     });
   }, [name]);
 
   const sendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    socket.emit("sendMessage", message, (res) => {
-      console.log("sendMessage response", res);
+    socket.emit("sendMessage", message, (res: any) => {
+      console.log(res);
     });
   };
 
