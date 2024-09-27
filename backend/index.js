@@ -9,8 +9,6 @@ const PORT = process.env.PORT;
 
 const app = express();
 
-console.log(process.env.DB);
-
 mongoose
   .connect(process.env.DB)
   .then(() => console.log("connected to database"));
