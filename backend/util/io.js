@@ -7,6 +7,7 @@ function socket(io) {
 
     socket.on("login", async (user, cb) => {
       try {
+        const allUser = await userController.allUser();
         const userData = await userController.saveUser(user, socket.id);
         const welcomeMessage = {
           chat: `${user}이 참여하였습니다.`,
