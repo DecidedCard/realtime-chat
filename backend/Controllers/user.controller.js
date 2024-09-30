@@ -29,18 +29,4 @@ userController.checkUser = async (token) => {
   return user;
 };
 
-userController.allUser = async () => {
-  const user = await User.find();
-
-  const change = await User.find({ online: true });
-
-  change.online = false;
-  change.save();
-  console.log(change);
-
-  if (!user) throw new Error("user not found");
-
-  return user;
-};
-
 module.exports = userController;

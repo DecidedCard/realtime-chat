@@ -7,14 +7,12 @@ function socket(io) {
 
     socket.on("login", async (user, cb) => {
       try {
-        const allUser = await userController.allUser();
         const userData = await userController.saveUser(user, socket.id);
         const welcomeMessage = {
           chat: `${user}이 참여하였습니다.`,
           user: { id: null, name: "system" },
         };
         io.emit("message", welcomeMessage);
-        io.emit("user", userData);
         cb({ ok: true, data: userData });
       } catch (error) {
         cb({ ok: false, error: error.message });
