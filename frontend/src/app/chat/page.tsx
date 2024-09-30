@@ -15,7 +15,6 @@ import "./Chat.css";
 import type { Message, socketLoginRes, User } from "@/types";
 
 const Chat = () => {
-  const [users, setUsers] = useState<User[]>([]);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -27,23 +26,10 @@ const Chat = () => {
 
     // 로그인 이벤트 등록
     socket.emit("login", name, (res: socketLoginRes) => {
-      if (res.ok) {
-        setUsers((prev) => {
-          // 중복 사용자 제거
-          if (prev.find((user) => user.name === res.data.name)) return prev;
-          return [...prev, res.data];
-        });
-      }
+      console.log("유저가 로그인하였습니다.", res);
     });
 
     // 사용자 정보 및 메시지 수신 핸들러
-    const handleUser = (userDate: User) => {
-      setUsers((prev) => {
-        // 중복 사용자 제거
-        if (prev.find((user) => user.name === userDate.name)) return prev;
-        return [...prev, userDate];
-      });
-    };
 
     const handleMessage = (message: { user: User; chat: string }) => {
       setMessages((prev) => {
@@ -59,12 +45,10 @@ const Chat = () => {
     };
 
     // 소켓 이벤트 리스너 등록
-    socket.on("user", handleUser);
     socket.on("message", handleMessage);
 
     // Cleanup: 컴포넌트가 언마운트될 때 기존 리스너 제거
     return () => {
-      socket.off("user", handleUser);
       socket.off("message", handleMessage);
     };
   }, [name]); // name이 바뀔 때만 실행
@@ -72,7 +56,7 @@ const Chat = () => {
   const sendMessage = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (message) {
-      socket.emit("sendMessage", message, (res: any) => {
+      socket.emit("sendMessage", message, (res: string) => {
         console.log(res);
       });
       setMessage(""); // 전송 후 메시지 초기화
@@ -90,7 +74,7 @@ const Chat = () => {
           sendMessage={sendMessage}
         />
       </div>
-      <TextContainer users={users} />
+      <TextContainer />
     </div>
   );
 };
